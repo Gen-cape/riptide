@@ -8,7 +8,6 @@
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux"];
       imports = [
-        ./lib
         ./packages
       ];
 
@@ -20,6 +19,7 @@
       };
 
       flake = {
+        lib = import ./lib;
         templates.default = {
           path = ./templates/vanilla;
         };
