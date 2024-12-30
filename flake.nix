@@ -7,42 +7,19 @@
   in
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux"];
+      imports = [
+        ./lib
+        ./packages
+      ];
 
-      perSystem = {
-        pkgs,
-        system,
-        ...
-      }: {
-        devShells.default = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [
-            (writeShellScriptBin "bd" ''
-              nix build .#default --no-substitute --out-link bd
-            '')
-            (writeShellScriptBin "rn" ''
-              nix run --no-substitute
-            '')
-            # (pkgs.callPackage ./packages/jujutsu/jujutsu-fzf.nix {})
-          ];
-        };
-        packages = rec {
-          sttt = pkgs.callPackage ./packages/sttt/sttt.nix {};
-          jujutsu-fzf = pkgs.callPackage ./packages/jujutsu/jujutsu-fzf.nix {};
-          fast = pkgs.callPackage ./packages/default.nix {};
-          default = fast;
-        };
-
+      perSystem = {system, ...}: {
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
           config.allowUnfree = true;
         };
       };
 
-      flake = let
-        pkgs = inputs.nixpkgs;
-        inherit (inputs.nixpkgs) lib;
-        mimics = import ./lib {inherit lib pkgs;};
-      in {
-        inherit mimics;
+      flake = {
         templates.default = {
           path = ./templates/vanilla;
         };
