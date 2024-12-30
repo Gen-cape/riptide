@@ -3,3 +3,4 @@ result/
 .direnv/
 nvim/
 repl-result-out/
+bd/

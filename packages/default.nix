@@ -1,44 +1,12 @@
-{
-  lib,
-  stdenv,
-  fetchFromGitHub,
-  unstableGitUpdater,
-  xxd,
-  pkg-config,
-  imagemagick,
-  wrapGAppsHook3,
-  gtk3,
-  jansson,
-  nixosTests,
-}:
-stdenv.mkDerivation rec {
-  pname = "urn-timer";
-  version = "unstable-2024-03-05";
-
-  src = fetchFromGitHub {
-    owner = "paoloose";
-    repo = "urn";
-    rev = "10082428749fabb69db1556f19940d8700ce48a2";
-    hash = "sha256-sQjHQ/i1d4v4ZnM0YAay+MdIj5l/FfIYj+NdH48OqfU=";
-  };
-
-  nativeBuildInputs = [
-    xxd
-    pkg-config
-    imagemagick
-    wrapGAppsHook3
+{...}: {
+  imports = [
+    ./devshells.nix
   ];
-
-  buildInputs = [
-    gtk3
-    jansson
-  ];
-
-  makeFlags = ["PREFIX=$(out)"];
-
-  passthru.updateScript = unstableGitUpdater {
-    url = "https://github.com/paoloose/urn.git";
+  perSystem = {pkgs, ...}: {
+    packages = rec {
+      sttt = pkgs.callPackage ./sttt/sttt.nix {};
+      jujutsu-fzf = pkgs.callPackage ./jujutsu/jujutsu-fzf.nix {};
+      default = sttt;
+    };
   };
-
-  passthru.tests.nixosTest = nixosTests.urn-timer;
 }
