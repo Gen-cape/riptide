@@ -9,6 +9,7 @@
       systems = ["x86_64-linux"];
       imports = [
         ./packages
+        ./lib
       ];
 
       perSystem = {system, ...}: {
@@ -19,7 +20,6 @@
       };
 
       flake = {
-        lib = import ./lib;
         templates.default = {
           path = ./templates/vanilla;
         };
