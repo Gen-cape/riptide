@@ -106,58 +106,57 @@
   callWith = scope: fn: dropFunctor (autoCall scope fn);
 
   simpleFzf = path: regex: nregex: let
-    matchedRegex = x: builtins.isList (builtins.match regex (builtins.toString x));
-    notMatchedRegex = x: builtins.isNull (builtins.match nregex (builtins.toString x));
+    matchedRegex = x: builtins.match regex (toString x) != null;
+    notMatchedRegex = x: builtins.match nregex (toString x) == null;
     target =
       if builtins.isPath path
-      then (lib.filesystem.listFilesRecursive path)
-      else path;
+      then lib.filesystem.listFilesRecursive path
+      else if builtins.isList path
+      then path
+      else [path];
   in
-    lib.pipe target [
-      (lib.filter matchedRegex)
-      (lib.filter notMatchedRegex)
-    ];
+    builtins.filter notMatchedRegex (builtins.filter matchedRegex target);
+
   wrapWith = left: right: str: left + str + right;
   wrapAny = wrapWith ".*" ".*";
   wrapParen = wrapWith ".*(" ").*";
-  wrapExpr = wrapper: lst: sep: wrapper (builtins.concatStringsSep sep lst);
+  wrapExpr = wrapper: lst: sep:
+    if builtins.length lst == 0
+    then ".*"
+    else wrapper (builtins.concatStringsSep sep lst);
 
   fzf' = path: regexList: let
-    isPos = x: ! (lib.hasPrefix "!" x);
-    isNeg = x: lib.hasPrefix "!" x;
-    trunc = x: let p = builtins.toString x; in builtins.substring 1 ((builtins.stringLength p) - 1) p;
-    processed =
-      builtins.foldl' (
-        acc: next: {
-          pos =
-            acc.pos
-            ++ (
-              if isPos next
-              then [next]
-              else []
-            );
-          neg =
-            acc.neg
-            ++ (
-              if isNeg next
-              then [(trunc next)]
-              else []
-            );
-        }
-      ) {
-        pos = [];
-        neg = [];
-      };
-    req = processed (lib.toList regexList);
-    wrappedRegex = wrapExpr wrapAny req.pos ".*";
+    normalizeInput = x:
+      if builtins.isList x
+      then x
+      else if builtins.isString x
+      then [x]
+      else throw "Input must be a string or list of strings";
+
+    processRegex = regex: {
+      isNegative = lib.hasPrefix "!" regex;
+      value =
+        if lib.hasPrefix "!" regex
+        then builtins.substring 1 (-1) regex
+        else regex;
+    };
+
+    regexes = map processRegex (normalizeInput regexList);
+
+    categorized = builtins.partition (x: !x.isNegative) regexes;
+    positives = map (x: x.value) categorized.right;
+    negatives = map (x: x.value) categorized.wrong;
+
+    wrappedRegex = wrapExpr wrapAny positives ".*";
     wrappedNregex =
-      if req.neg == []
+      if negatives == []
       then ""
-      else wrapExpr wrapParen req.neg "|";
+      else wrapExpr wrapParen negatives "|";
   in
     simpleFzf path wrappedRegex wrappedNregex;
-  # [path wrappedRegex wrappedNregex];
-  fzf = path: regexLst: let regex = lib.strings.splitString " " regexLst; in fzf' path regex;
+
+  fzf = path: regexStr:
+    fzf' path (lib.strings.splitString " " (toString regexStr));
 
   wrench = builtins.foldl' (f: g: x: g (f x)) (t: t); # this wrench ain't gonna swing itself, lazy version
 in {
