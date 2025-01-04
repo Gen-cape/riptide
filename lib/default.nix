@@ -58,14 +58,4 @@
     (
       {pkgs, ...}: pkgs.callPackage ./drvs/wrapPypi.nix {}
     );
-in {
-  # perSystem = {
-  #   _module.args.qol = customLib;
-  # };
-  #
-  # flake = {
-  #   mimics = customLib;
-  # };
-
-  flake.mimics = customLib;
-}
+in {flake.mimics = customLib;}
