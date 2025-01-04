@@ -24,20 +24,28 @@
 
   # The components of lib that are needed to build the lib as a whole
   # Define manual volumes and so here
-  baseLib = lib.makeExtensible (self: let
-    call = callSelf callWith customLib;
-    systemLibs = ["builders" "modules" "services" "themes"];
-    langLibs = ["options" "path" "tools"];
-    callLibs = prefix: cont: lib.foldl' (exp: acc: lib.recursiveUpdate exp acc) {} (map (m: {"${m}" = call (./${prefix} + "/${m}.nix");}) cont);
-  in
-    {
-      e = call ./experimental/debug.nix;
-      xdgTemplate = ./system/xdgTemplate.nix; # yeah, intentionally not called
-      inherit (self.tools) callWith;
-      inherit (self.path) getModulesFzf;
-    }
-    // callLibs "lang" langLibs
-    // callLibs "system" systemLibs);
+  baseLib = lib.makeExtensible (
+    self: let
+      removeExtension = filename: let
+        parts = builtins.split "\\." filename;
+        # Get all elements except the last one
+        nameParts = builtins.elemAt parts 0;
+      in
+        if builtins.length parts == 1
+        then filename
+        else nameParts;
+      mergeListOfAttrs = lib.foldl' (exp: acc: lib.recursiveUpdate exp acc) {};
+      call = callSelf callWith customLib;
+      callLibs = nixFiles: mergeListOfAttrs (map (m: {"${removeExtension (builtins.baseNameOf m)}" = call m;}) nixFiles);
+    in
+      {
+        # manual imports
+        xdgTemplate = ./system/xdgTemplate.nix; # yeah, intentionally not called
+      }
+      // callLibs (fzf ./system "!xdg")
+      // callLibs (fzf ./lang "")
+      // {inherit (self.tools) callWith;}
+  );
 
   # Autoparsed bulk of the modules
   coreLib = lib.makeExtensible (self: let
