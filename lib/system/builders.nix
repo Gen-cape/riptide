@@ -1,47 +1,88 @@
-{lib, ...}: let
+{
+  lib,
+  mimics,
+  ...
+}: let
   inherit (lib.attrsets) recursiveUpdate;
-  inherit (lib.lists) singleton concatLists;
   inherit (lib.modules) mkDefault;
+  inherit (mimics) dropFunctor;
+  mergeSets = {
+    __functor = self: arg:
+      if arg != null
+      then recursiveUpdate self arg
+      else dropFunctor self;
+  };
 
-  mkNixos = lib.nixosSystem;
+  systemEssence = withSystem: system:
+    withSystem system ({
+      inputs',
+      self',
+      pkgs,
+      system,
+      ...
+    }: {
+      inherit inputs' self' pkgs system;
+    });
+
   mkSystem = {
     withSystem,
-    self,
-    inputs,
-    outPath, #nixpkgs.outPath
+    basicArgs ? {},
     ...
   }: {
-    system,
     hostname,
+    system ? "x86_64-linux",
     modules ? [],
     specialArgs ? {},
     ...
   } @ otherArgs: let
+    essence = systemEssence withSystem system;
     baseModule = {
-      networking.hostName = otherArgs.hostname;
-      nixpkgs = {
-        hostPlatform = mkDefault otherArgs.system;
-        flake.source = outPath;
-      };
+      networking.hostName = hostname;
+      nixpkgs.hostPlatform = mkDefault system;
     };
   in
-    withSystem system ({
-      inputs',
-      self',
-      ...
-    }:
-      mkNixos {
-        specialArgs =
-          recursiveUpdate {
-            inherit lib inputs self inputs' self';
-          }
-          specialArgs;
+    lib.nixosSystem {
+      inherit system;
+      specialArgs =
+        mergeSets
+        {inherit lib;}
+        essence
+        basicArgs
+        specialArgs
+        null;
 
-        modules = concatLists [
-          (singleton baseModule)
-          modules
-        ];
-      });
+      modules = lib.flatten ([baseModule] ++ modules);
+    };
+
+  mkHome = {
+    withSystem,
+    homeManagerConfiguration,
+    basicArgs ? {},
+    ...
+  }: {
+    username,
+    homeDirectory ? "/home/${username}",
+    system ? "x86_64-linux",
+    modules ? [],
+    specialArgs ? {},
+    ...
+  } @ otherArgs: let
+    essence = systemEssence withSystem system;
+    baseModule = {
+    };
+  in
+    homeManagerConfiguration {
+      # inherit system;
+      inherit (essence) pkgs;
+      extraSpecialArgs =
+        mergeSets
+        essence
+        basicArgs
+        specialArgs
+        null;
+
+      modules = lib.flatten ([baseModule] ++ modules);
+    };
 in {
-  inherit mkSystem mkNixos;
+  inherit mkSystem systemEssence mkHome;
 }

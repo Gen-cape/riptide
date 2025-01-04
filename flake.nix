@@ -10,6 +10,7 @@
       imports = [
         ./packages
         ./lib
+        ./test.nix
       ];
 
       perSystem = {system, ...}: {
