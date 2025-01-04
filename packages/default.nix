@@ -4,8 +4,9 @@
   ];
   perSystem = {pkgs, ...}: {
     packages = rec {
-      sttt = pkgs.callPackage ./sttt/sttt.nix {};
-      jujutsu-fzf = pkgs.callPackage ./jujutsu/jujutsu-fzf.nix {};
+      sttt = pkgs.callPackage ./sttt {};
+      jujutsu-fzf = pkgs.callPackage ./jujutsu {};
+      drvinter = pkgs.callPackage ./drvinter {};
       default = sttt;
     };
   };
