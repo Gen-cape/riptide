@@ -44,6 +44,7 @@
       }
       // callLibs (fzf ./system "!xdg")
       // callLibs (fzf ./lang "")
+      // callLibs (fzf ./external "")
       // {inherit (self.tools) callWith;}
   );
 
@@ -54,7 +55,7 @@
     wrench [
       (map call)
       (lib.foldl' (exp: acc: lib.recursiveUpdate exp acc) {})
-    ] (fzf ./. "!default.nix !old !debug !__"));
+    ] (fzf ./. "!default.nix !old !debug !__ !external"));
 
   # Merged result into a single lib
   customLib = baseLib.extend (lib.composeManyExtensions [
