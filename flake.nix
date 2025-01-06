@@ -21,9 +21,8 @@
       };
 
       flake = {
-        templates.default = {
-          path = ./templates/vanilla;
-        };
+        templates.default.path = ./templates/vanilla;
+        templates.pip.path = ./templates/pythonImpure;
       };
     };
 
