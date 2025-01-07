@@ -8,10 +8,10 @@
       systems = ["x86_64-linux"];
       # perSystem = {config,self',inputs',pkgs,system,...}: {
       perSystem = {pkgs, ...}: {
-        packages.default = pkgs.hello; # or inputs'.nixpkgs.legacyPackages.hello
+        # packages.default = ./default.nix; # or inputs'.nixpkgs.legacyPackages.hello
         devShells.default = pkgs.mkShell rec {
           nativeBuildInputs = [
-            (pkgs.writeShellScriptBin "" '''')
+            (pkgs.writeShellScriptBin "bd" ''nix build'')
           ];
           buildInputs = [];
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
