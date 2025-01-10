@@ -10,6 +10,7 @@
       ghostty = pkgs.callPackage ./ghostty {};
       tmsufolders = pkgs.callPackage ./tmsufolders {};
       tmsufs = pkgs.callPackage ./tmsufs {};
+      quest = pkgs.callPackage ./quest {};
       default = sttt;
     };
   };

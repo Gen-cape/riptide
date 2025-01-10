@@ -46,7 +46,7 @@
       specialArgs =
         mergeSets
         {inherit lib;}
-        essence
+        {inherit (essence) inputs' self' system;}
         basicArgs
         specialArgs
         null;
