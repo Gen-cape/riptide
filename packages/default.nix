@@ -11,6 +11,7 @@
       tmsufolders = pkgs.callPackage ./tmsufolders {};
       tmsufs = pkgs.callPackage ./tmsufs {};
       quest = pkgs.callPackage ./quest {};
+      keep-alive = pkgs.callPackage ./keep-alive {};
       fonts = (pkgs.callPackage ./lotr-fonts {}).all;
       default = sttt;
     };
