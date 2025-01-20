@@ -8,7 +8,7 @@
       systems = ["x86_64-linux"];
       # perSystem = {config,self',inputs',pkgs,system,...}: {
       perSystem = {pkgs, ...}: {
-        # packages.default = pkgs.callPackages ./default.nix {}; # or inputs'.nixpkgs.legacyPackages.hello
+        # packages.default = pkgs.callPackage ./default.nix {}; # or inputs'.nixpkgs.legacyPackages.hello
         devShells.default = pkgs.mkShell rec {
           nativeBuildInputs = [
             (pkgs.writeShellScriptBin "bd" ''nix build'')
