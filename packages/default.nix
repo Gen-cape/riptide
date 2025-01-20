@@ -12,6 +12,7 @@
       tmsufs = pkgs.callPackage ./tmsufs {};
       quest = pkgs.callPackage ./quest {};
       keep-alive = pkgs.callPackage ./keep-alive {};
+      display3d = pkgs.callPackage ./display3d {};
       fonts = (pkgs.callPackage ./lotr-fonts {}).all;
       default = sttt;
     };
