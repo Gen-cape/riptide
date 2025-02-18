@@ -14,6 +14,10 @@
       keep-alive = pkgs.callPackage ./keep-alive {};
       display3d = pkgs.callPackage ./display3d {};
       fonts = (pkgs.callPackage ./lotr-fonts {}).all;
+      uxn = pkgs.callPackage ./uxn {};
+      notepad = uxn.notepad;
+      calendar = uxn.calendar;
+      m291 = uxn.m291;
       default = sttt;
     };
   };
