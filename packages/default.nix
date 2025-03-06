@@ -15,6 +15,7 @@
       display3d = pkgs.callPackage ./display3d {};
       fonts = (pkgs.callPackage ./lotr-fonts {}).all;
       uxn = pkgs.callPackage ./uxn {};
+      numi-cli = pkgs.callPackage ./numi-cli {};
       notepad = uxn.notepad;
       calendar = uxn.calendar;
       m291 = uxn.m291;
