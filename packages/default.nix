@@ -19,6 +19,7 @@
       notepad = uxn.notepad;
       calendar = uxn.calendar;
       m291 = uxn.m291;
+      toml-bombadil = pkgs.callPackage ./toml-bombadil {};
       default = sttt;
     };
   };
