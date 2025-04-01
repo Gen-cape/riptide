@@ -13,13 +13,14 @@
 }:
 stdenv.mkDerivation rec {
   pname = "jj-fzf";
-  version = "0.23.0";
+  version = "0.25.0";
 
   src = fetchFromGitHub {
     owner = "tim-janik";
     repo = "jj-fzf";
-    rev = "v${version}";
-    hash = "sha256-a8h5H4uDsMHJvP/TuvkuCaw/uTR/Oe1lARPpqSzjqoQ=";
+    # rev = "v${version}";
+	rev = "501a936d4f5843b0a3b4df37caec529fbe199c2b";
+    hash = "sha256-1ND9pMzLaW+iIJYFDoseUixK522x/1N2ryAySnYOjGs=";
   };
 
   buildInputs = [jujutsu];
