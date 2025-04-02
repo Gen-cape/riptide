@@ -5,7 +5,7 @@
   perSystem = {pkgs, ...}: {
     packages = rec {
       sttt = pkgs.callPackage ./sttt {};
-      jujutsu-fzf = pkgs.callPackage ./jj-fzf {};
+      jj-fzf = pkgs.callPackage ./jj-fzf {};
       drvinter = pkgs.callPackage ./drvinter {};
       ghostty = pkgs.callPackage ./ghostty {};
       tmsufolders = pkgs.callPackage ./tmsufolders {};

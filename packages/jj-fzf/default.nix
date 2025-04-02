@@ -1,15 +1,14 @@
 {
+  lib,
+  bashInteractive,
   coreutils,
   fetchFromGitHub,
-  findutils,
   fzf,
   gawk,
-  gitFull,
-  gnugrep,
   gnused,
   jujutsu,
+  makeWrapper,
   stdenv,
-  which,
 }:
 stdenv.mkDerivation rec {
   pname = "jj-fzf";
@@ -18,49 +17,39 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "tim-janik";
     repo = "jj-fzf";
-    # rev = "v${version}";
-	rev = "501a936d4f5843b0a3b4df37caec529fbe199c2b";
-    hash = "sha256-1ND9pMzLaW+iIJYFDoseUixK522x/1N2ryAySnYOjGs=";
+    tag = "v${version}";
+    hash = "sha256-StF0TKXTgtglFDbNTAU1c7Vw+6m70Mz2RvFon3difsk=";
   };
 
-  buildInputs = [jujutsu];
-
-  nativeBuildInputs = [jujutsu];
+  nativeBuildInputs = [makeWrapper];
 
   dontConfigure = true;
   dontBuild = true;
 
   installPhase = ''
     runHook preInstall
-    mkdir -p $out/bin
-    install -m755 jj-fzf $out/bin/jj-fzf
+    install -D jj-fzf $out/bin/jj-fzf
+    substituteInPlace $out/bin/jj-fzf \
+      --replace-fail "/usr/bin/env bash" "${lib.getExe bashInteractive}"
+    wrapProgram $out/bin/jj-fzf \
+      --prefix PATH : ${
+      lib.makeBinPath [
+        bashInteractive
+        coreutils
+        fzf
+        gawk
+        gnused
+        jujutsu
+      ]
+    }
     runHook postInstall
   '';
 
-  nativeCheckInputs = [jujutsu];
-
-  doCheck = true;
-  checkPhase = ''
-    # Ensure jj is available
-    jj version
-  '';
-
-  # Patch the script to ensure all required dependencies are in PATH
-  postPatch = ''
-    sed -i '1i#!/usr/bin/env bash' jj-fzf
-    patchShebangs jj-fzf
-  '';
-
-  # Add runtime dependencies to PATH
-  propagatedBuildInputs = [
-    coreutils
-    findutils
-    fzf
-    gawk
-    gitFull
-    gnugrep
-    gnused
-    jujutsu
-    which
-  ];
+  meta = with lib; {
+    description = "Text UI for Jujutsu based on fzf";
+    homepage = "https://github.com/tim-janik/jj-fzf";
+    license = licenses.mpl20;
+    maintainers = with maintainers; [bbigras];
+    platforms = platforms.all;
+  };
 }
