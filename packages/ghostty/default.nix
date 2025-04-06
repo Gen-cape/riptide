@@ -14,7 +14,7 @@ rustPlatform.buildRustPackage rec {
     hash = "sha256-hggqu4sJ9xWZUhnShlErpuZoV6wWHsapFu7oD/s6Fzw=";
   };
 
-  cargoHash = "sha256-4fHu4zRENCPDj9FPCG349DO2zcU5KRjgtxJIE5SwcyY=";
+  cargoHash = "sha256-OTMfgIf5VP4aOIVzul4eSTQmTtwWLI60CO3Il9PZRro=";
 
   # Rename the binary in Cargo.toml before building
   patchPhase = ''
