@@ -27,10 +27,10 @@
     };
 
   inputs = {
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     # nixpkgs.url = "github:nixos/nixpkgs?rev=a225c7d3073fb5bdef090a1b7986d18a8d557b1a";
-    nixpkgs.url = "github:nixos/nixpkgs?rev=5df43628fdf08d642be8ba5b3625a6c70731c19c";
+    # nixpkgs.url = "github:nixos/nixpkgs?rev=5df43628fdf08d642be8ba5b3625a6c70731c19c";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
