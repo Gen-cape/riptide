@@ -21,6 +21,7 @@
       m291 = uxn.m291;
       toml-bombadil = pkgs.callPackage ./toml-bombadil {};
       tray-tui = pkgs.callPackage ./tray-tui {};
+      ulss = pkgs.callPackage ./ulss {};
 
       default = sttt;
     };
