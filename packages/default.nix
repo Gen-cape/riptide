@@ -22,6 +22,7 @@
       toml-bombadil = pkgs.callPackage ./toml-bombadil {};
       tray-tui = pkgs.callPackage ./tray-tui {};
       ulss = pkgs.callPackage ./ulss {};
+      hijacker = pkgs.callPackage ./hijacker {}; # Adaptation of my bash script by my good friend (IN RUST!!!) :3
 
       default = sttt;
     };
