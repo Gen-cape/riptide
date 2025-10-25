@@ -154,7 +154,6 @@
       };
       makeExtraArgs = args: _: {
         system = args.system or "x86_64-linux";
-        inherit lib;
       };
     };
 
